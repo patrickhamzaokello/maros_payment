@@ -109,6 +109,7 @@ export default function ConcertTicketPlatform() {
   }
 
   const handleUserInfoSubmit = async (userInfo: any) => {
+    console.log("okello")
     setIsProcessingPayment(true)
     setPaymentError(null)
 

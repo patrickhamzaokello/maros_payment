@@ -16,7 +16,7 @@ interface UserInfoFormProps {
    * @param userInfo - The user information from the form.
    */
 
-  onSubmit: (userInfo: any) => Promise<void>
+  onSubmit: (userInfo: any) => void
   onBack: () => void
   selectedTickets: { [key: string]: number }
   ticketTypes: any[]
