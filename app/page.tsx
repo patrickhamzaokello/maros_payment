@@ -28,36 +28,36 @@ const ticketTypes: TicketType[] = [
   {
     id: "regular",
     name: "Regular",
-    price: 10000,
+    price: 20000,
     description: "General admission with standard seating",
     available: 500,
   },
   {
     id: "vip",
     name: "VIP",
-    price: 100000,
-    description: "Premium seating, meet & greet, exclusive merchandise",
+    price: 50000,
+    description: "Premium seating, meet & greet, exclusive access",
     available: 100,
   },
   {
-    id: "gate",
-    name: "At Gate",
-    price: 15000,
-    description: "Purchase at venue entrance (subject to availability)",
+    id: "table",
+    name: "Table",
+    price: 200000,
+    description: "This ticket comes with a table",
     available: 50,
   },
 ]
 
 const concertInfo = {
-  title: "Summer Music Festival 2024",
-  artist: "The Electric Waves",
-  date: "Saturday, July 20, 2024",
-  time: "7:00 PM - 11:00 PM",
-  venue: "Madison Square Garden",
-  location: "New York, NY",
+  title: "LILALA LIRA LAUGHS LOUDEST COMEDY",
+  artist: "Profesa Maros",
+  date: "Friday, July 11, 2025",
+  time: "6:00 PM - 11:00 PM",
+  venue: "Lira Hotel, Main Hall",
+  location: "Lira",
   description:
-    "Join us for an unforgettable night of music featuring The Electric Waves with special guests. Experience the magic of live music in one of the world's most iconic venues.",
-  coverImage: "/placeholder.svg?height=400&width=600",
+    "Join us for an unforgettable night of Professa Maros live in Lilalo lira laughs loudest comedy and featuring special guest like Young Emma, Lujudict, Mr Berry, Jaymarphy, Lil Square, DJ Gomez. Experience the magic of live band hosted by MC Dogo Destiny on Friday 11 July 2025 at Lira Hotel Main Hall.",
+  coverImage: "/maros_cover.jpg",
 }
 
 export default function ConcertTicketPlatform() {
@@ -130,7 +130,7 @@ export default function ConcertTicketPlatform() {
           country_code: "UG", // Assuming Uganda since using UGX
           first_name: userInfo.name.split(' ')[0] || userInfo.name,
           last_name: userInfo.name.split(' ').slice(1).join(' ') || userInfo.name,
-          line_1: userInfo.address || "Kampala, Uganda", // You might want to add address field to your form
+          line_1: userInfo.address || "Lira, Uganda", // You might want to add address field to your form
         },
       }
 
@@ -210,7 +210,7 @@ export default function ConcertTicketPlatform() {
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-md mx-auto px-4 py-3">
-          <h1 className="text-xl font-bold text-center">Concert Tickets</h1>
+          <h1 className="text-xl font-bold text-center">Lilalo Comedy Tickets</h1>
         </div>
       </div>
 
@@ -254,7 +254,7 @@ export default function ConcertTicketPlatform() {
               <User className="w-5 h-5" />
               <div>
                 <p className="font-medium text-gray-900">Hosted by</p>
-                <p className="text-sm">Live Nation Entertainment</p>
+                <p className="text-sm">MC DOGO DESTINY</p>
               </div>
             </div>
           </div>
