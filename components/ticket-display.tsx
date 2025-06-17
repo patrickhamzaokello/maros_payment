@@ -43,15 +43,17 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
     setTimeout(() => setCopiedTicket(null), 2000)
   }
 
+  const loadImage = (src: any) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.src = src;
+    });
+  };
+
   const downloadTicket = (ticket: Ticket) => {
 
-    const loadImage = (src) => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.src = src;
-      });
-    };
+
     // Create canvas for ticket image
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
