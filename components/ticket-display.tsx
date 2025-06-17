@@ -108,7 +108,7 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
     ctx.fillText(`Status: ${ticket.paymentStatus.toUpperCase()}`, 40, 360)
 
     // Image Code placeholder  
-    const img = await loadImage("/maros_port.jpeg");
+    const img = loadImage("/maros_port.jpeg");
     ctx.drawImage(img, canvas.width - 150, 120, 120, 120);
 
     // Download
