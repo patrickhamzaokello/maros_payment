@@ -43,13 +43,6 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
     setTimeout(() => setCopiedTicket(null), 2000)
   }
 
-  const loadImage = (src: any) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.src = src;
-    });
-  };
 
   const downloadTicket = (ticket: Ticket) => {
 
@@ -110,8 +103,12 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
     ctx.fillText(`Status: ${ticket.paymentStatus.toUpperCase()}`, 40, 360)
 
     // Image Code placeholder  
-    const img = loadImage("/maros_port.jpeg");
-    ctx.drawImage(img, canvas.width - 150, 120, 120, 120);
+    const img = new Image();
+    img.onload = function() {
+      // Draw the image in place of the QR code placeholder
+      ctx.drawImage(img, canvas.width - 150, 120, 120, 120);
+    };
+    img.src = "/maros_port.jpeg";
 
     // Download
     const link = document.createElement("a")
