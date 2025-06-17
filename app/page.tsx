@@ -122,7 +122,7 @@ export default function ConcertTicketPlatform() {
         amount: getTotalPrice(),
         description: generateTicketDescription(),
         callback_url: `${window.location.origin}/payment/callback`, // Update with your callback URL
-        notification_id: `NOTIF-${Date.now()}`,
+        notification_id: "e523e059-f93b-43ef-9e2b-dd2fb3d7497e",
         branch: "Concert Tickets", // You can customize this
         billing_address: {
           email_address: userInfo.email,
