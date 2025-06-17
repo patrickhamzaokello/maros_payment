@@ -44,6 +44,14 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
   }
 
   const downloadTicket = (ticket: Ticket) => {
+
+    const loadImage = (src) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = src;
+      });
+    };
     // Create canvas for ticket image
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
@@ -85,7 +93,7 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
       `Venue: ${ticket.venue}`,
       `Location: ${ticket.location}`,
       `Type: ${ticket.ticketType}`,
-      `Price: $${ticket.price}`,
+      `Price: UGX ${ticket.price}`,
       `Holder: ${ticket.holderName}`,
       `Ticket #: ${ticket.id}`,
     ]
@@ -99,12 +107,9 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
     ctx.font = "bold 16px Arial"
     ctx.fillText(`Status: ${ticket.paymentStatus.toUpperCase()}`, 40, 360)
 
-    // QR Code placeholder
-    ctx.fillStyle = "#e5e7eb"
-    ctx.fillRect(canvas.width - 150, 120, 120, 120)
-    ctx.fillStyle = "#6b7280"
-    ctx.font = "12px Arial"
-    ctx.fillText("QR CODE", canvas.width - 120, 185)
+    // Image Code placeholder  
+    const img = await loadImage("/maros_port.jpeg");
+    ctx.drawImage(img, canvas.width - 150, 120, 120, 120);
 
     // Download
     const link = document.createElement("a")
@@ -201,7 +206,7 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Price</span>
-                    <span className="font-medium text-green-600">${ticket.price}</span>
+                    <span className="font-medium text-green-600">UGX {ticket.price}</span>
                   </div>
                 </div>
 

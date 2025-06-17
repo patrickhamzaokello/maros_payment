@@ -97,7 +97,7 @@ export function UserInfoForm({
         </div>
       </div>
 
-      <div className="max-w-md mx-auto bg-white">
+      <div className="max-w-md mx-auto bg-white mt-4">
         {/* Order Summary */}
         <div className="p-4 bg-gray-50">
           <h3 className="font-semibold mb-3">Order Summary</h3>
