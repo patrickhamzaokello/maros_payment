@@ -6,8 +6,8 @@ export async function handlePaymentRequest(orderDetails: PaymentOrderRequest) {
     try {
         // Use server-side environment variables (without NEXT_PUBLIC_ prefix for security)
         const credentials = {
-            consumer_key: process.env.PESAPAL_CONSUMER_KEY ?? "",
-            consumer_secret: process.env.PESAPAL_CONSUMER_SECRET ?? ""
+            consumer_key: process.env.NEXT_PUBLIC_PESAPAL_CONSUMER_KEY ?? "",
+            consumer_secret: process.env.NEXT_PUBLIC_PESAPAL_CONSUMER_SECRET ?? ""
         };
 
         console.log('Environment check:', {
