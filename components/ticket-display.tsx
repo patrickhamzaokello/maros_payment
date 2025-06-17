@@ -55,7 +55,7 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
     canvas.height = 450
 
     // Helper function to draw rounded rectangle
-    const drawRoundedRect = (x, y, width, height, radius) => {
+    const drawRoundedRect = (x: any, y: any, width: any, height: any, radius: any) => {
       ctx.beginPath()
       ctx.moveTo(x + radius, y)
       ctx.lineTo(x + width - radius, y)
