@@ -291,7 +291,7 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto bg-white">
+      <div className="max-w-md mx-auto bg-white mt-4">
         {/* Success Message */}
         <div className="p-4 bg-green-50 border-b border-green-200">
           <div className="text-center">
