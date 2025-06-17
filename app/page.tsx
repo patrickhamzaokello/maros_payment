@@ -114,6 +114,7 @@ export default function ConcertTicketPlatform() {
     setPaymentError(null)
 
     try {
+        console.log("orderdetails-form")
       // Create order details for payment
       const orderDetails: PaymentOrderRequest = {
         id: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -132,6 +133,9 @@ export default function ConcertTicketPlatform() {
           line_1: userInfo.address || "Kampala, Uganda", // You might want to add address field to your form
         },
       }
+
+        console.log("formed details")
+      console.log(orderDetails)
 
       // Call the server action to process payment
       const paymentResult = await handlePaymentRequest(orderDetails)
