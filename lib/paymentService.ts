@@ -8,7 +8,6 @@ import {
   PaymentOrderStatus
 } from '@/types/payment-type';
 import { PaymentServiceError } from '@/lib/PaymentServiceError';
-// import { PaymentServiceError } from '@/lib/PaymentServiceError';
 
 export class PaymentService {
   private readonly API_BASE_URL = 'https://pay.pesapal.com/v3/';
@@ -93,24 +92,57 @@ export class PaymentService {
       consumer_secret: string
   }): Promise<PaymentAuth> {
       try {
-          const response = await this.fetchWithConfig<PaymentAuth>(
-              'api/Auth/RequestToken',
-              {
-                  method: 'POST',
-                  body: JSON.stringify(credentials),
-              }
-          );
-
-          this.tokenInfo = {
-              token: response.token,
-              expiryDate: new Date(response.expiryDate)
+          // Create a separate fetch for authentication that doesn't use fetchWithConfig
+          // to avoid circular dependency
+          const url = `${this.API_BASE_URL}api/Auth/RequestToken`;
+          const headers = {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache',
           };
 
-          return response;
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+          const response = await fetch(url, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify(credentials),
+              signal: controller.signal,
+          });
+
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+              const errorData = await response.json()
+                  .catch(() => ({ message: 'Failed to parse error response' }));
+
+              throw new PaymentServiceError(
+                  errorData.message || response.statusText,
+                  response.status,
+                  errorData
+              );
+          }
+
+          const authResponse: PaymentAuth = await response.json();
+
+          // Store token info for future requests
+          this.tokenInfo = {
+              token: authResponse.token,
+              expiryDate: new Date(authResponse.expiryDate)
+          };
+
+          return authResponse;
       } catch (error) {
-          throw new PaymentServiceError(
-              `Authentication failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          );
+          if (error instanceof PaymentServiceError) {
+              throw error;
+          }
+          if (error instanceof Error) {
+              if (error.name === 'AbortError') {
+                  throw new PaymentServiceError('Authentication timeout');
+              }
+              throw new PaymentServiceError(`Authentication failed: ${error.message}`);
+          }
+          throw new PaymentServiceError('Authentication failed: Unknown error');
       }
   }
 
