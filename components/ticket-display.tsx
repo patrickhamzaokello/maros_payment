@@ -44,7 +44,7 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
   }
 
 
-  const downloadTicket = (ticket) => {
+  const downloadTicket = (ticket: Ticket) => {
     // Create canvas for ticket image
     const canvas = document.createElement("canvas")
     const ctx = canvas.getContext("2d")
