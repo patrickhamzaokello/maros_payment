@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { UserInfoForm } from "@/components/user-info-form"
 import { TicketDisplay } from "@/components/ticket-display"
+import type { PaymentOrderRequest } from "@/types/payment-type"
+import { handlePaymentRequest } from "@/lib/payment-actions"
 
 interface TicketType {
   id: string
@@ -63,6 +65,8 @@ export default function ConcertTicketPlatform() {
   const [showUserForm, setShowUserForm] = useState(false)
   const [generatedTickets, setGeneratedTickets] = useState<any[]>([])
   const [showTickets, setShowTickets] = useState(false)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
 
   const updateTicketQuantity = (ticketId: string, change: number) => {
     setSelectedTickets((prev) => {
@@ -93,37 +97,86 @@ export default function ConcertTicketPlatform() {
     }
   }
 
-  const handleUserInfoSubmit = (userInfo: any) => {
-    // Generate tickets
-    const tickets = []
-    for (const [ticketId, quantity] of Object.entries(selectedTickets)) {
-      const ticketType = ticketTypes.find((t) => t.id === ticketId)
-      if (ticketType) {
-        for (let i = 0; i < quantity; i++) {
-          tickets.push({
-            id: `TKT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            concertTitle: concertInfo.title,
-            artist: concertInfo.artist,
-            date: concertInfo.date,
-            time: concertInfo.time,
-            venue: concertInfo.venue,
-            location: concertInfo.location,
-            ticketType: ticketType.name,
-            price: ticketType.price,
-            holderName: userInfo.name,
-            holderEmail: userInfo.email,
-            holderPhone: userInfo.phone,
-            paymentStatus: "pending",
-            paymentLink: `https://payment.example.com/pay/${Date.now()}`,
-            qrCode: `QR-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          })
-        }
-      }
-    }
+  const generateTicketDescription = () => {
+    const ticketSummary = Object.entries(selectedTickets)
+      .map(([ticketId, quantity]) => {
+        const ticket = ticketTypes.find(t => t.id === ticketId)
+        return `${quantity}x ${ticket?.name || ticketId}`
+      })
+      .join(', ')
+    
+    return `${concertInfo.title} - ${ticketSummary}`
+  }
 
-    setGeneratedTickets(tickets)
-    setShowTickets(true)
-    setShowUserForm(false)
+  const handleUserInfoSubmit = async (userInfo: any) => {
+    setIsProcessingPayment(true)
+    setPaymentError(null)
+
+    try {
+      // Create order details for payment
+      const orderDetails: PaymentOrderRequest = {
+        id: `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        currency: "UGX",
+        amount: getTotalPrice(),
+        description: generateTicketDescription(),
+        callback_url: `${window.location.origin}/payment/callback`, // Update with your callback URL
+        notification_id: `NOTIF-${Date.now()}`,
+        branch: "Concert Tickets", // You can customize this
+        billing_address: {
+          email_address: userInfo.email,
+          phone_number: userInfo.phone,
+          country_code: "UG", // Assuming Uganda since using UGX
+          first_name: userInfo.name.split(' ')[0] || userInfo.name,
+          last_name: userInfo.name.split(' ').slice(1).join(' ') || userInfo.name,
+          line_1: userInfo.address || "Kampala, Uganda", // You might want to add address field to your form
+        },
+      }
+
+      // Call the server action to process payment
+      const paymentResult = await handlePaymentRequest(orderDetails)
+
+      if (paymentResult.success && paymentResult.redirect_url) {
+        // Generate tickets with payment information
+        const tickets = []
+        for (const [ticketId, quantity] of Object.entries(selectedTickets)) {
+          const ticketType = ticketTypes.find((t) => t.id === ticketId)
+          if (ticketType) {
+            for (let i = 0; i < quantity; i++) {
+              tickets.push({
+                id: `TKT-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                orderId: orderDetails.id,
+                concertTitle: concertInfo.title,
+                artist: concertInfo.artist,
+                date: concertInfo.date,
+                time: concertInfo.time,
+                venue: concertInfo.venue,
+                location: concertInfo.location,
+                ticketType: ticketType.name,
+                price: ticketType.price,
+                holderName: userInfo.name,
+                holderEmail: userInfo.email,
+                holderPhone: userInfo.phone,
+                paymentStatus: "pending",
+                paymentLink: paymentResult.redirect_url,
+                qrCode: `QR-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              })
+            }
+          }
+        }
+
+        setGeneratedTickets(tickets)
+        setShowTickets(true)
+        setShowUserForm(false)
+      } else {
+        // Handle payment error
+        setPaymentError(paymentResult.error || 'Payment processing failed')
+      }
+    } catch (error) {
+      console.error('Error processing payment:', error)
+      setPaymentError('An unexpected error occurred. Please try again.')
+    } finally {
+      setIsProcessingPayment(false)
+    }
   }
 
   if (showTickets) {
@@ -134,10 +187,15 @@ export default function ConcertTicketPlatform() {
     return (
       <UserInfoForm
         onSubmit={handleUserInfoSubmit}
-        onBack={() => setShowUserForm(false)}
+        onBack={() => {
+          setShowUserForm(false)
+          setPaymentError(null)
+        }}
         selectedTickets={selectedTickets}
         ticketTypes={ticketTypes}
         totalPrice={getTotalPrice()}
+        isProcessing={isProcessingPayment}
+        error={paymentError}
       />
     )
   }
@@ -220,7 +278,7 @@ export default function ConcertTicketPlatform() {
                         </Badge>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{ticket.description}</p>
-                      <p className="text-lg font-bold text-green-600">UGX {ticket.price}</p>
+                      <p className="text-lg font-bold text-green-600">UGX {ticket.price.toLocaleString()}</p>
                     </div>
                   </div>
 
@@ -250,7 +308,9 @@ export default function ConcertTicketPlatform() {
                     </div>
 
                     {selectedTickets[ticket.id] && (
-                      <p className="font-semibold text-green-600">UGX {ticket.price * selectedTickets[ticket.id]}</p>
+                      <p className="font-semibold text-green-600">
+                        UGX {(ticket.price * selectedTickets[ticket.id]).toLocaleString()}
+                      </p>
                     )}
                   </div>
                 </CardContent>
@@ -270,7 +330,9 @@ export default function ConcertTicketPlatform() {
 
               <div className="flex justify-between items-center">
                 <span className="font-medium">Total Price:</span>
-                <span className="text-xl font-bold text-green-600">UGX {getTotalPrice()}</span>
+                <span className="text-xl font-bold text-green-600">
+                  UGX {getTotalPrice().toLocaleString()}
+                </span>
               </div>
 
               <Button onClick={handleProceedToCheckout} className="w-full" size="lg">

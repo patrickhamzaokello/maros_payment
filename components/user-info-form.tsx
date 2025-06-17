@@ -11,11 +11,18 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 
 interface UserInfoFormProps {
-  onSubmit: (userInfo: any) => void
+  /**
+   * Function to call when the form is submitted.
+   * @param userInfo - The user information from the form.
+   */
+
+  onSubmit: (userInfo: any) => Promise<void>
   onBack: () => void
   selectedTickets: { [key: string]: number }
   ticketTypes: any[]
   totalPrice: number
+  isProcessing?: boolean
+  error?: string | null
 }
 
 export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, totalPrice }: UserInfoFormProps) {
