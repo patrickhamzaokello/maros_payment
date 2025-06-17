@@ -45,236 +45,242 @@ export function TicketDisplay({ tickets }: TicketDisplayProps) {
 
 
   const downloadTicket = (ticket: Ticket) => {
-    // Create canvas for ticket image
-    const canvas = document.createElement("canvas")
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
+  // Create canvas for ticket image
+  const canvas = document.createElement("canvas")
+  const ctx = canvas.getContext("2d")
+  if (!ctx) return
 
-    // Set canvas size (wider for better layout)
-    canvas.width = 900
-    canvas.height = 450
+  // Set canvas size (landscape ticket format)
+  canvas.width = 800
+  canvas.height = 300
 
-    // Helper function to draw rounded rectangle
-    const drawRoundedRect = (x: any, y: any, width: any, height: any, radius: any) => {
-      ctx.beginPath()
-      ctx.moveTo(x + radius, y)
-      ctx.lineTo(x + width - radius, y)
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
-      ctx.lineTo(x + width, y + height - radius)
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
-      ctx.lineTo(x + radius, y + height)
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
-      ctx.lineTo(x, y + radius)
-      ctx.quadraticCurveTo(x, y, x + radius, y)
-      ctx.closePath()
-    }
+  // Background
+  ctx.fillStyle = "#ffffff"
+  ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    // Background with subtle gradient
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
-    gradient.addColorStop(0, "#f8fafc")
-    gradient.addColorStop(1, "#ffffff")
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+  // Left section - Colorful graphic area (40% of width)
+  const leftSectionWidth = canvas.width * 0.4
+  
+  // Dark background for left section
+  ctx.fillStyle = "#2d1b4e"
+  ctx.fillRect(0, 0, leftSectionWidth, canvas.height)
 
-    // Main ticket container with rounded corners and shadow effect
-    ctx.shadowColor = "rgba(0, 0, 0, 0.1)"
-    ctx.shadowBlur = 20
-    ctx.shadowOffsetX = 0
-    ctx.shadowOffsetY = 10
+  // Create abstract geometric shapes for visual appeal
+  // Large circles
+  ctx.fillStyle = "#7c3aed"
+  ctx.beginPath()
+  ctx.arc(leftSectionWidth * 0.3, canvas.height * 0.25, 40, 0, 2 * Math.PI)
+  ctx.fill()
 
-    drawRoundedRect(30, 30, canvas.width - 60, canvas.height - 60, 15)
-    ctx.fillStyle = "#ffffff"
-    ctx.fill()
+  ctx.fillStyle = "#06d6a0"
+  ctx.beginPath()
+  ctx.arc(leftSectionWidth * 0.7, canvas.height * 0.4, 35, 0, 2 * Math.PI)
+  ctx.fill()
 
-    // Reset shadow
-    ctx.shadowColor = "transparent"
-    ctx.shadowBlur = 0
-    ctx.shadowOffsetX = 0
-    ctx.shadowOffsetY = 0
+  ctx.fillStyle = "#f72585"
+  ctx.beginPath()
+  ctx.arc(leftSectionWidth * 0.5, canvas.height * 0.7, 45, 0, 2 * Math.PI)
+  ctx.fill()
 
-    // Header section with gradient background
-    const headerGradient = ctx.createLinearGradient(0, 40, 0, 140)
-    headerGradient.addColorStop(0, "#1e293b")
-    headerGradient.addColorStop(1, "#334155")
+  // Smaller accent shapes
+  ctx.fillStyle = "#ffd60a"
+  ctx.beginPath()
+  ctx.arc(leftSectionWidth * 0.15, canvas.height * 0.6, 20, 0, 2 * Math.PI)
+  ctx.fill()
 
-    drawRoundedRect(40, 40, canvas.width - 80, 100, 12)
-    ctx.fillStyle = headerGradient
-    ctx.fill()
+  ctx.fillStyle = "#ff006e"
+  ctx.beginPath()
+  ctx.arc(leftSectionWidth * 0.8, canvas.height * 0.75, 25, 0, 2 * Math.PI)
+  ctx.fill()
 
-    // Concert title (main heading)
-    ctx.fillStyle = "#ffffff"
-    ctx.font = "bold 32px 'Segoe UI', Arial, sans-serif"
-    ctx.textAlign = "left"
-    ctx.fillText(ticket.concertTitle, 60, 85)
+  // Add some geometric patterns
+  ctx.fillStyle = "#4cc9f0"
+  ctx.fillRect(leftSectionWidth * 0.1, canvas.height * 0.1, 15, 15)
 
-    // Artist name
-    ctx.fillStyle = "#e2e8f0"
-    ctx.font = "20px 'Segoe UI', Arial, sans-serif"
-    ctx.fillText(`by ${ticket.artist}`, 60, 115)
+  ctx.fillStyle = "#7209b7"
+  ctx.fillRect(leftSectionWidth * 0.75, canvas.height * 0.15, 12, 12)
 
-    // Divider line
-    ctx.strokeStyle = "#e2e8f0"
-    ctx.lineWidth = 1
-    ctx.beginPath()
-    ctx.moveTo(60, 170)
-    ctx.lineTo(canvas.width - 200, 170)
-    ctx.stroke()
+  // Artist/Event name on colored section
+  ctx.fillStyle = "#ffffff"
+  ctx.font = "bold 16px 'Segoe UI', Arial, sans-serif"
+  ctx.textAlign = "center"
+  ctx.save()
+  ctx.translate(leftSectionWidth * 0.5, canvas.height * 0.9)
+  ctx.rotate(-Math.PI / 2)
+  ctx.fillText(ticket.artist.toUpperCase(), 0, 0)
+  ctx.restore()
 
-    // Left column - Event details
-    ctx.fillStyle = "#1e293b"
-    ctx.font = "bold 14px 'Segoe UI', Arial, sans-serif"
-    ctx.fillText("EVENT DETAILS", 60, 200)
+  // Middle section - Main content area
+  const middleSectionStart = leftSectionWidth + 20
+  const middleSectionWidth = canvas.width * 0.45
+  
+  // Event title
+  ctx.fillStyle = "#1a1a1a"
+  ctx.font = "bold 24px 'Segoe UI', Arial, sans-serif"
+  ctx.textAlign = "left"
+  ctx.fillText(ticket.concertTitle, middleSectionStart, 50)
 
-    const eventDetails = [
-      { label: "Date", value: ticket.date },
-      { label: "Time", value: ticket.time },
-      { label: "Venue", value: ticket.venue },
-      { label: "Location", value: ticket.location }
-    ]
+  // Category/Type
+  ctx.fillStyle = "#666666"
+  ctx.font = "12px 'Segoe UI', Arial, sans-serif"
+  ctx.fillText(ticket.ticketType.toUpperCase(), middleSectionStart, 75)
 
-    eventDetails.forEach((detail, index) => {
-      const yPos = 225 + index * 30
+  // Divider line
+  ctx.strokeStyle = "#e0e0e0"
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(middleSectionStart, 90)
+  ctx.lineTo(middleSectionStart + middleSectionWidth - 40, 90)
+  ctx.stroke()
 
-      // Label
-      ctx.fillStyle = "#64748b"
-      ctx.font = "12px 'Segoe UI', Arial, sans-serif"
-      ctx.fillText(detail.label.toUpperCase(), 60, yPos)
+  // Date and time section
+  ctx.fillStyle = "#1a1a1a"
+  ctx.font = "bold 14px 'Segoe UI', Arial, sans-serif"
+  ctx.fillText("DATE & TIME", middleSectionStart, 115)
+  
+  ctx.fillStyle = "#333333"
+  ctx.font = "16px 'Segoe UI', Arial, sans-serif"
+  ctx.fillText(ticket.date, middleSectionStart, 135)
+  ctx.fillText(ticket.time, middleSectionStart, 155)
 
-      // Value
-      ctx.fillStyle = "#1e293b"
-      ctx.font = "bold 16px 'Segoe UI', Arial, sans-serif"
-      ctx.fillText(detail.value, 60, yPos + 15)
-    })
+  // Venue section
+  ctx.fillStyle = "#1a1a1a"
+  ctx.font = "bold 14px 'Segoe UI', Arial, sans-serif"
+  ctx.fillText("VENUE", middleSectionStart, 185)
+  
+  ctx.fillStyle = "#333333"
+  ctx.font = "16px 'Segoe UI', Arial, sans-serif"
+  ctx.fillText(ticket.venue, middleSectionStart, 205)
+  ctx.fillText(ticket.location, middleSectionStart, 225)
 
-    // Right column - Ticket info
-    ctx.fillStyle = "#1e293b"
-    ctx.font = "bold 14px 'Segoe UI', Arial, sans-serif"
-    ctx.fillText("TICKET INFO", canvas.width - 320, 200)
+  // Price and ticket info
+  ctx.fillStyle = "#1a1a1a"
+  ctx.font = "bold 18px 'Segoe UI', Arial, sans-serif"
+  ctx.fillText(`UGX ${ticket.price.toLocaleString()}`, middleSectionStart, 255)
 
-    const ticketDetails = [
-      { label: "Type", value: ticket.ticketType },
-      { label: "Price", value: `UGX ${ticket.price.toLocaleString()}` },
-      { label: "Holder", value: ticket.holderName },
-      { label: "Ticket #", value: ticket.id }
-    ]
+  // Ticket holder
+  ctx.fillStyle = "#666666"
+  ctx.font = "12px 'Segoe UI', Arial, sans-serif"
+  ctx.fillText(`Holder: ${ticket.holderName}`, middleSectionStart, 275)
 
-    ticketDetails.forEach((detail, index) => {
-      const yPos = 225 + index * 30
+  // Payment status indicator
+  const statusColor = ticket.paymentStatus?.toLowerCase() === "completed" || 
+                     ticket.paymentStatus?.toLowerCase() === "paid" ? "#06d6a0" : "#ff6b35"
+  
+  ctx.fillStyle = statusColor
+  ctx.beginPath()
+  ctx.arc(middleSectionStart + middleSectionWidth - 50, 40, 8, 0, 2 * Math.PI)
+  ctx.fill()
 
-      // Label
-      ctx.fillStyle = "#64748b"
-      ctx.font = "12px 'Segoe UI', Arial, sans-serif"
-      ctx.fillText(detail.label.toUpperCase(), canvas.width - 320, yPos)
+  // Right section - Barcode and ticket number
+  const rightSectionStart = leftSectionWidth + middleSectionWidth + 20
+  const rightSectionWidth = canvas.width - rightSectionStart - 20
 
-      // Value
-      ctx.fillStyle = "#1e293b"
-      ctx.font = "bold 16px 'Segoe UI', Arial, sans-serif"
-      ctx.fillText(detail.value, canvas.width - 320, yPos + 15)
-    })
+  // Ticket number (rotated)
+  ctx.fillStyle = "#666666"
+  ctx.font = "12px 'Segoe UI', Arial, sans-serif"
+  ctx.textAlign = "center"
+  ctx.save()
+  ctx.translate(rightSectionStart + 20, canvas.height * 0.3)
+  ctx.rotate(-Math.PI / 2)
+  ctx.fillText(`#${ticket.id}`, 0, 0)
+  ctx.restore()
 
-    // QR Code/Image placeholder area
-    const qrSize = 120
-    const qrX = canvas.width - 160
-    const qrY = 180
+  // Barcode simulation
+  ctx.fillStyle = "#000000"
+  const barcodeStart = rightSectionStart + 35
+  const barcodeWidth = rightSectionWidth - 50
+  const barcodeHeight = 60
+  const barcodeY = canvas.height * 0.4
 
-    // QR code background
-    drawRoundedRect(qrX, qrY, qrSize, qrSize, 8)
-    ctx.fillStyle = "#f1f5f9"
-    ctx.fill()
-
-    // QR code border
-    ctx.strokeStyle = "#e2e8f0"
-    ctx.lineWidth = 2
-    ctx.stroke()
-
-    // Load and draw image
-    const img = new Image()
-    img.onload = function () {
-      ctx.save()
-      drawRoundedRect(qrX + 5, qrY + 5, qrSize - 10, qrSize - 10, 6)
-      ctx.clip()
-      ctx.drawImage(img, qrX + 5, qrY + 5, qrSize - 10, qrSize - 10)
-      ctx.restore()
-    }
-    img.src = "/maros_port.jpeg"
-
-    // QR code label
-    ctx.fillStyle = "#64748b"
-    ctx.font = "12px 'Segoe UI', Arial, sans-serif"
-    ctx.textAlign = "center"
-    ctx.fillText("SCAN ME", qrX + qrSize / 2, qrY + qrSize + 20)
-
-    // Payment status badge
-    const statusX = 60
-    const statusY = canvas.height - 90
-    const statusPadding = 12
-
-    // Determine status color
-    const isPaymentComplete = ticket.paymentStatus?.toLowerCase() === "completed" ||
-      ticket.paymentStatus?.toLowerCase() === "paid"
-    const statusColor = isPaymentComplete ? "#059669" : "#d97706"
-    const statusBgColor = isPaymentComplete ? "#d1fae5" : "#fef3c7"
-    const statusText = isPaymentComplete ? "PAID" : "PENDING"
-
-    // Status background
-    ctx.font = "bold 12px 'Segoe UI', Arial, sans-serif"
-    const statusWidth = ctx.measureText(statusText).width + statusPadding * 2
-
-    drawRoundedRect(statusX, statusY - 20, statusWidth, 25, 12)
-    ctx.fillStyle = statusBgColor
-    ctx.fill()
-
-    // Status text
-    ctx.fillStyle = statusColor
-    ctx.textAlign = "center"
-    ctx.fillText(statusText, statusX + statusWidth / 2, statusY - 5)
-
-    // Footer note
-    ctx.fillStyle = "#94a3b8"
-    ctx.font = "11px 'Segoe UI', Arial, sans-serif"
-    ctx.textAlign = "center"
-    ctx.fillText("Present this ticket at the venue entrance", canvas.width / 2, canvas.height - 45)
-
-    // Terms note
-    ctx.fillText("Valid only for the specified date and time • Non-transferable", canvas.width / 2, canvas.height - 25)
-
-    // Decorative corner elements
-    ctx.fillStyle = "#e2e8f0"
-
-    // Top corners
-    ctx.beginPath()
-    ctx.arc(60, 60, 3, 0, 2 * Math.PI)
-    ctx.fill()
-
-    ctx.beginPath()
-    ctx.arc(canvas.width - 60, 60, 3, 0, 2 * Math.PI)
-    ctx.fill()
-
-    // Bottom corners
-    ctx.beginPath()
-    ctx.arc(60, canvas.height - 60, 3, 0, 2 * Math.PI)
-    ctx.fill()
-
-    ctx.beginPath()
-    ctx.arc(canvas.width - 60, canvas.height - 60, 3, 0, 2 * Math.PI)
-    ctx.fill()
-
-    // Download
-    setTimeout(() => {
-      const link = document.createElement("a")
-      link.download = `${ticket.concertTitle.replace(/\s+/g, '-')}-ticket-${ticket.id}.png`
-      link.href = canvas.toDataURL("image/png", 1.0)
-      link.click()
-
-      // Show toast notification (assuming toast function exists)
-      if (typeof toast === 'function') {
-        toast({
-          title: "Download Complete!",
-          description: "Your ticket has been saved successfully",
-        })
-      }
-    }, 100) // Small delay to ensure image loads
+  // Generate barcode-like pattern
+  for (let i = 0; i < 25; i++) {
+    const barWidth = Math.random() > 0.5 ? 2 : 1
+    const barHeight = barcodeHeight * (0.7 + Math.random() * 0.3)
+    const x = barcodeStart + (i * (barcodeWidth / 25))
+    const y = barcodeY + (barcodeHeight - barHeight) / 2
+    
+    ctx.fillRect(x, y, barWidth, barHeight)
   }
+
+  // Barcode number
+  ctx.fillStyle = "#333333"
+  ctx.font = "10px 'Courier New', monospace"
+  ctx.textAlign = "center"
+  ctx.fillText("1234567890123", rightSectionStart + rightSectionWidth/2, barcodeY + barcodeHeight + 20)
+
+  // QR code placeholder (smaller, positioned below barcode)
+  const qrSize = 50
+  const qrX = rightSectionStart + (rightSectionWidth - qrSize) / 2
+  const qrY = barcodeY + barcodeHeight + 40
+
+  // QR code background
+  ctx.fillStyle = "#f5f5f5"
+  ctx.fillRect(qrX, qrY, qrSize, qrSize)
+  
+  // QR code border
+  ctx.strokeStyle = "#cccccc"
+  ctx.lineWidth = 1
+  ctx.strokeRect(qrX, qrY, qrSize, qrSize)
+
+  // Load and draw image in QR area
+  const img = new Image()
+  img.onload = function() {
+    ctx.drawImage(img, qrX + 2, qrY + 2, qrSize - 4, qrSize - 4)
+  }
+  img.src = "maros_port.jpeg"
+
+  // Perforation line effect (dotted line separating sections)
+  ctx.strokeStyle = "#cccccc"
+  ctx.lineWidth = 1
+  ctx.setLineDash([3, 3])
+  
+  // Vertical perforation between left and middle sections
+  ctx.beginPath()
+  ctx.moveTo(leftSectionWidth + 10, 20)
+  ctx.lineTo(leftSectionWidth + 10, canvas.height - 20)
+  ctx.stroke()
+
+  // Vertical perforation between middle and right sections
+  ctx.beginPath()
+  ctx.moveTo(rightSectionStart - 10, 20)
+  ctx.lineTo(rightSectionStart - 10, canvas.height - 20)
+  ctx.stroke()
+
+  // Reset line dash
+  ctx.setLineDash([])
+
+  // Small circular perforations for authentic ticket look
+  ctx.fillStyle = "#ffffff"
+  const perfY = [canvas.height * 0.2, canvas.height * 0.5, canvas.height * 0.8]
+  perfY.forEach(y => {
+    // Left perforation line
+    ctx.beginPath()
+    ctx.arc(leftSectionWidth + 10, y, 4, 0, 2 * Math.PI)
+    ctx.fill()
+    
+    // Right perforation line
+    ctx.beginPath()
+    ctx.arc(rightSectionStart - 10, y, 4, 0, 2 * Math.PI)
+    ctx.fill()
+  })
+
+  // Download with delay to ensure image loads
+  setTimeout(() => {
+    const link = document.createElement("a")
+    link.download = `${ticket.concertTitle.replace(/\s+/g, '-')}-ticket-${ticket.id}.png`
+    link.href = canvas.toDataURL("image/png", 1.0)
+    link.click()
+
+    // Show toast notification (assuming toast function exists)
+    if (typeof toast === 'function') {
+      toast({
+        title: "Download Complete!",
+        description: "Your ticket has been saved successfully",
+      })
+    }
+  }, 100)
+}
 
   return (
     <div className="min-h-screen bg-gray-50">
