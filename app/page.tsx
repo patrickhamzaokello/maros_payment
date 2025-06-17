@@ -49,15 +49,15 @@ const ticketTypes: TicketType[] = [
 ]
 
 const concertInfo = {
-  title: "Summer Music Festival 2024",
-  artist: "The Electric Waves",
-  date: "Saturday, July 20, 2024",
-  time: "7:00 PM - 11:00 PM",
-  venue: "Madison Square Garden",
-  location: "New York, NY",
+  title: "LILALO LIRA LAUGHS LOUDEST COMEDY",
+  artist: "Profesa Maros",
+  date: "Friday, July 11, 2025",
+  time: "6:00 PM - 11:00 PM",
+  venue: "Lira Hotel, Main Hall",
+  location: "Lira",
   description:
-    "Join us for an unforgettable night of music featuring The Electric Waves with special guests. Experience the magic of live music in one of the world's most iconic venues.",
-  coverImage: "/placeholder.svg?height=400&width=600",
+    "Join us for an unforgettable night of Professa Maros live in Lilalo lira laughs loudest comedy and featuring special guest like Young Emma, Lujudict, Mr Berry, Jaymarphy, Lil Square, DJ Gomez. Experience the magic of live band hosted by MC Dogo Destiny on Friday 11 July 2025 at Lira Hotel Main Hall.",
+  coverImage: "/maros_cover.jpeg",
 }
 
 export default function ConcertTicketPlatform() {
@@ -210,7 +210,7 @@ export default function ConcertTicketPlatform() {
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-md mx-auto px-4 py-3">
-          <h1 className="text-xl font-bold text-center">Concert Tickets</h1>
+          <h1 className="text-xl font-bold text-center">LILALO COMEDY SHOW - 11 JULY 2025 (LIRA HOTEL)</h1>
         </div>
       </div>
 
