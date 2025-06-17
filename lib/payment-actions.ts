@@ -8,6 +8,7 @@ export async function handlePaymentRequest(orderDetails: PaymentOrderRequest) {
             consumer_key: process.env.NEXT_PUBLIC_PESAPAL_CONSUMER_KEY ?? "",
             consumer_secret: process.env.NEXT_PUBLIC_PESAPAL_CONSUMER_SECRET ?? ""
         };
+        console.log(credentials)
 
         if (!credentials.consumer_key || !credentials.consumer_secret) {
             return { success: false, error: 'Payment configuration error' };
