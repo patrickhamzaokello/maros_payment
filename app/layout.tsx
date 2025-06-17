@@ -6,8 +6,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Concert Tickets - Mobile First Platform",
-  description: "Buy concert tickets online with our mobile-first platform",
+  title: "LILALO COMEDY SHOW - PROFESA MAROS",
+  description: "Online Tickets Available",
 }
 
 export default function RootLayout({
