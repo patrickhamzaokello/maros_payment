@@ -3,12 +3,13 @@
 import type React from "react"
 
 import { useState } from "react"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface UserInfoFormProps {
   /**
@@ -25,7 +26,15 @@ interface UserInfoFormProps {
   error?: string | null
 }
 
-export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, totalPrice }: UserInfoFormProps) {
+export function UserInfoForm({ 
+  onSubmit, 
+  onBack, 
+  selectedTickets, 
+  ticketTypes, 
+  totalPrice, 
+  isProcessing = false, 
+  error = null 
+}: UserInfoFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -48,7 +57,7 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required"
-    } else if (!/^\+?[\d\s\-$$$$]{10,}$/.test(formData.phone)) {
+    } else if (!/^\+?[\d\s\-()]{10,}$/.test(formData.phone)) {
       newErrors.phone = "Please enter a valid phone number"
     }
 
@@ -58,7 +67,7 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (validateForm()) {
+    if (validateForm() && !isProcessing) {
       onSubmit(formData)
     }
   }
@@ -75,7 +84,13 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={onBack} className="p-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onBack} 
+            className="p-2"
+            disabled={isProcessing}
+          >
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold">Checkout</h1>
@@ -96,7 +111,7 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
                   <span>
                     {ticket.name} × {quantity}
                   </span>
-                  <span>${ticket.price * quantity}</span>
+                  <span>UGX {(ticket.price * quantity).toLocaleString()}</span>
                 </div>
               )
             })}
@@ -104,9 +119,18 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
           <Separator className="my-3" />
           <div className="flex justify-between font-semibold">
             <span>Total</span>
-            <span className="text-green-600">${totalPrice}</span>
+            <span className="text-green-600">UGX {totalPrice.toLocaleString()}</span>
           </div>
         </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="p-4">
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         {/* User Information Form */}
         <div className="p-4">
@@ -125,6 +149,7 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     placeholder="Enter your full name"
                     className={errors.name ? "border-red-500" : ""}
+                    disabled={isProcessing}
                   />
                   {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                 </div>
@@ -138,6 +163,7 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     placeholder="Enter your email address"
                     className={errors.email ? "border-red-500" : ""}
+                    disabled={isProcessing}
                   />
                   {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
@@ -149,15 +175,28 @@ export function UserInfoForm({ onSubmit, onBack, selectedTickets, ticketTypes, t
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
-                    placeholder="Enter your phone number"
+                    placeholder="Enter your phone number (e.g., +256700000000)"
                     className={errors.phone ? "border-red-500" : ""}
+                    disabled={isProcessing}
                   />
                   {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
                 </div>
 
                 <div className="pt-4">
-                  <Button type="submit" className="w-full" size="lg">
-                    Generate Tickets
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    size="lg"
+                    disabled={isProcessing}
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Processing Payment...
+                      </>
+                    ) : (
+                      "Generate Tickets"
+                    )}
                   </Button>
                 </div>
               </form>
